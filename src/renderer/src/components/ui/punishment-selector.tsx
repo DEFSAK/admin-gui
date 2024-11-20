@@ -197,7 +197,7 @@ export function PunishmentSelector({ className, setDuration, setMaxDuration, set
                             Change the Punishment reason/label/duration or delete them. Create a Punishment through the combobox though.
                         </DialogDescription>
                     </DialogHeader>
-                    <div className="-mx-6 flex-1 overflow-scroll px-6 py-2">
+                    <div className="-mx-6 flex-1 overflow-auto px-6 py-2">
                         {punishments.map((punishment) => {
                             return (
                                 <DialogListItem

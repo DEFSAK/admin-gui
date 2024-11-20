@@ -4,8 +4,11 @@ import { clipboard } from 'electron'
 
 const Hardware = KeySender.Hardware
 
-export function ParsePlayerData(text: string): Player[] {
+export function ParsePlayerData(text: string): ParsedPlayerData {
   const lines = text.split('\n')
+
+  let tmp = lines[0].replace('ServerName - ', '')
+  const serverName = tmp.slice(0, tmp.lastIndexOf(' ')).trim()
 
   const playerDataLines = lines.slice(2)
   const parsedData: Player[] = []
@@ -24,7 +27,7 @@ export function ParsePlayerData(text: string): Player[] {
     parsedData.push({ displayName: columns[0], playfabId: columns[1] })
   })
 
-  return parsedData.filter((item) => item.playfabId !== 'NULL')
+  return { server: serverName, players: parsedData.filter((item) => item.playfabId !== 'NULL') }
 }
 
 export type Game = InstanceType<typeof Hardware>
@@ -40,7 +43,6 @@ export function GetConsoleKey() {
 
 export async function WriteToConsole(game: Game, event: CommandEvent, text: string) {
   if (text === '🫃') return
-
   const consoleKey = GetConsoleKey()
 
   if (!consoleKey) {
@@ -48,8 +50,12 @@ export async function WriteToConsole(game: Game, event: CommandEvent, text: stri
     return
   }
 
-  clipboard.writeText(text)
-  game.workwindow.setForeground()
-  await game.keyboard.sendKeys([consoleKey, ['ctrl', 'v'], 'enter'])
-  event.event.reply('command-response', { command: event.command })
+  setTimeout(async () => {
+    clipboard.writeText(text)
+    game.workwindow.setForeground()
+    await game.keyboard.sendKeys([consoleKey, ['ctrl', 'v'], 'enter'])
+    event.event.reply('command-response', { command: event.command })
+
+    event.event.sender.focus()
+  }, 100)
 }

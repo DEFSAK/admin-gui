@@ -1,6 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs"
 import { ConfettiOptions, ConstructToastMessage } from "./lib/utils"
-import { ColorPickerDemo } from "./components/tabs/dev"
 import { ToastAction } from "./components/ui/toast"
 import APIProvider from "./components/api-provider"
 import Dashboard from "./components/tabs/dashboard"
@@ -25,18 +24,9 @@ const AppTabs = [
   { label: "History", component: History },
   { label: "Settings", component: Settings },
 ] as ApplicationTabs[]
-
-if (window.api.isDev) {
-  AppTabs.push({ label: "Dev", component: ColorPickerDemo })
-}
-
 const TabsDefault = AppTabs[0].label;
 
-interface AppProps {
-  onThemeChange: (theme: ColorScheme) => void;
-}
-
-function App({ onThemeChange }: AppProps): JSX.Element {
+function App(): JSX.Element {
   const { toast } = useToast();
 
   const handleErrorNoConsoleKey = () => {
@@ -63,8 +53,9 @@ function App({ onThemeChange }: AppProps): JSX.Element {
     ConfettiOptions[cType] && confetti(ConfettiOptions[cType]);
   }
 
-  const handlePlayerData = (_, data: Player[]) => {
-    setPlayers(data);
+  const handlePlayerData = (_, data: ParsedPlayerData) => {
+    setPlayers(data.players);
+    setServer(data.server);
   }
 
   useEffect(() => {
@@ -85,6 +76,8 @@ function App({ onThemeChange }: AppProps): JSX.Element {
     displayName: "Ⱥ Smiggy",
     playfabId: "6F33D568A08FF682"
   }] : []);
+  const [server, setServer] = useState<string>("");
+
   const [tab, setTab] = useState(TabsDefault);
 
   const onTabChange = (value: string) => {
@@ -95,7 +88,7 @@ function App({ onThemeChange }: AppProps): JSX.Element {
     <div className="flex flex-col h-screen w-screen">
 
       <Background>
-        <APIProvider>
+        <APIProvider server={server}>
           <Tabs value={tab} onValueChange={onTabChange}>
             <TabsList className={`grid grid-flow-col grid-cols-${AppTabs.length}`}>
               {AppTabs.map((tab) => (
@@ -107,7 +100,7 @@ function App({ onThemeChange }: AppProps): JSX.Element {
             <div className="flex-1 overflow-hidden">
               {AppTabs.map((tab) => (
                 <TabsContent key={tab.label} value={tab.label}>
-                  <tab.component players={players} onThemeChange={onThemeChange} />
+                  <tab.component players={players} />
                 </TabsContent>
               ))}
             </div>

@@ -38,7 +38,7 @@ function PunishDialog({ type, player, setOpen }: PunishDialogProps) {
     const form = createForm(PunishmentSchema);
 
     function onSubmit(data: z.infer<typeof PunishmentSchema>) {
-        api.command({ type, player, ...data })
+        api.command({ type, player, ...data, server: api.server() })
         setOpen?.(false);
     }
 

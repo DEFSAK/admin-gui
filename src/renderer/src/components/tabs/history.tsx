@@ -1,5 +1,5 @@
 import { CommandMultiSelect, CommandTypeValue } from "../ui/multi-select";
-import { Clock, File, FileText, User } from "lucide-react";
+import { Clock, File, FileText, Server, User } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
 import { useEffect, useState } from "react";
@@ -31,7 +31,8 @@ function CommandCard({ savedCommand }: { savedCommand: SavedCommand }) {
     const type = command.type;
     const renderCommandDetails = () => (
         <>
-            {type !== 'list_players' && <Separator className="my-2" />}
+            <Separator className="my-2" />
+            {renderData(<Server className="w-4 h-4 mr-2" />, `${command.server || 'unknown'}`)}
             {'player' in command && renderData(<User className="w-4 h-4 mr-2" />, `${command.player.displayName} (${command.player.playfabId})`)}
             {'reason' in command && renderData(<FileText className="w-4 h-4 mr-2" />, command.reason)}
             {('duration' in command && type !== 'kick') && renderData(<Clock className="w-4 h-4 mr-2" />, `${command.duration} hour${command.duration > 1 ? 's' : ''}`)}

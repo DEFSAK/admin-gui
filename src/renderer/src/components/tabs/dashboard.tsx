@@ -28,7 +28,7 @@ function Dashboard({ players }: DashboardProps) {
         <Container>
             <div className="flex gap-1">
                 <Button variant="outline" onClick={() => {
-                    api.command({ type: 'list_players' })
+                    api.command({ type: 'list_players', server: 'unknown' })
                 }}>
                     <RefreshCcw />
                 </Button>

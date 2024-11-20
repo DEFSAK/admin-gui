@@ -93,8 +93,6 @@ export function CommandMultiSelect({ className, setSelectedTypes }: CommandMulti
         (framework) => !selected.includes(framework)
     );
 
-    console.log(selectables, selected, inputValue);
-
     return (
         <Command
             onKeyDown={handleKeyDown}

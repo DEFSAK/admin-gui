@@ -18,8 +18,6 @@ function StatDialog({ player, data }: StatDialogProps) {
     const [requestFailed, setRequestFailed] = useState(false);
     const { api, rate_remaining } = useAPI();
 
-    console.log(playFabData);
-
     useEffect(() => {
         if (data) {
             setPlayFabData(data);

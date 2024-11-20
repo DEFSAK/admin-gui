@@ -9,11 +9,14 @@ interface ComboBoxProps {
     options: { value: string, label: string }[];
     className?: string;
     setLabel?: (label: string) => void;
+    setExtValue?: (value: string) => void;
+    extLabel?: string;
 }
 
-function ComboBox({ options, className, setLabel }: ComboBoxProps) {
+function ComboBox({ options, className, setLabel, setExtValue }: ComboBoxProps) {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(options[0].value);
+
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -22,7 +25,7 @@ function ComboBox({ options, className, setLabel }: ComboBoxProps) {
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className={cn("w-[150px] justify-between", className || "")}
+                    className={cn("w-fit justify-between", className || "")}
                 >
                     {value
                         ? options.find((o) => o.value === value)?.label
@@ -32,7 +35,7 @@ function ComboBox({ options, className, setLabel }: ComboBoxProps) {
             </PopoverTrigger>
             <PopoverContent className="w-[150px] p-0">
                 <Command>
-                    <CommandList>
+                    <CommandList className="max-h-[200px]">
                         <CommandEmpty>No options found :(</CommandEmpty>
                         <CommandGroup>
                             {options.map((option) => (
@@ -41,6 +44,7 @@ function ComboBox({ options, className, setLabel }: ComboBoxProps) {
                                     value={option.value}
                                     onSelect={(currentValue) => {
                                         setValue(currentValue === value ? "name" : currentValue);
+                                        setExtValue?.(currentValue);
                                         setLabel?.(option.label);
                                         setOpen(false);
                                     }}

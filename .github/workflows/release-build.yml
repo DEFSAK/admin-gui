@@ -34,11 +34,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get version from package.json
-        id: get_version
+      - name: set version in src/renderer/src/assets/version.json
+        id: set_version
         run: |
-          $version = (Get-Content -Raw -Path package.json | ConvertFrom-Json).version
-          echo "version=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+          # for getting the correct filename to rename
+          $envversion = (Get-Content -Raw -Path package.json | ConvertFrom-Json).version
+          echo "envversion=$envversion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+
+          # for populating src/renderer/src/assets/version.json
+          $version = "${{ github.run_number }}"
+          $branch = "${{ github.ref_name }}"
+          $commit_hash = "${{github.sha }}"
+
+          $version_data = @{
+            "version"     = $version
+            "branch"      = $branch
+            "commit hash" = $commit_hash
+          }
+
+          $version_data | ConvertTo-Json | set-content -Force -Path src/renderer/src/assets/version.json
 
       - name: Download Artifact
         uses: actions/download-artifact@v4
@@ -66,7 +80,7 @@ jobs:
         run: |
           $NewSetupName = "Admin-GooWee-Setup-${{ github.ref_name }}.exe"
           echo "newsetupname=$NewSetupName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
-          Rename-Item -Path "dist/admin-goowee-finale-${{ env.version }}-setup.exe" -NewName "$NewSetupName"
+          Rename-Item -Path "dist/admin-goowee-finale-${{ env.envversion }}-setup.exe" -NewName "$NewSetupName"
       
       - name: Get env
         run: |
