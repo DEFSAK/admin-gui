@@ -79,6 +79,7 @@ jobs:
 
       - name: Overrule stuffs
         run: |
+          ls env:
           # exe name 
           $NewSetupName = "Admin-GooWee-Setup-${{ github.ref_name }}-${{ github.run_number }}.exe"
           echo "newsetupname=$NewSetupName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
