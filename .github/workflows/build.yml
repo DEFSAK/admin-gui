@@ -4,6 +4,13 @@ permissions:
   contents: write
 
 on:
+  workflow_dispatch:
+    inputs:
+      myCommit:
+        description: 'Commit SHA1'
+        required: true
+        default: 'undefined'
+        type: string
   pull_request:
     types: [opened, synchronize] # Runs on merges
   push:
