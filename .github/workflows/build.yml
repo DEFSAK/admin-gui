@@ -141,9 +141,9 @@ jobs:
 
       - name: Get debug info
         run: |
-          ls dist
+          ls -h dist
           # ls dist/${{ env.newsetupname }}
-          cat latest.yml
+          cat dist/latest.yml
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
