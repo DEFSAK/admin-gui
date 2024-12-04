@@ -67,3 +67,9 @@ jobs:
 
       - name: Build for Windows
         run: npm run build:win
+
+      - name: Get debug info
+        run: |
+          ls dist
+          # ls dist/${{ env.newsetupname }}
+          cat latest.yml
