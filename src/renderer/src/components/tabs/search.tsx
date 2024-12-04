@@ -1,5 +1,6 @@
 import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
 import { columns, TableColumns } from "../search-table/columns";
+import { FloatingLabelInput } from "../ui/floating-input";
 import { truncateAliasHistory } from "@/lib/api";
 import { DataTable } from "../ui/data-table";
 import { createForm } from "@/lib/forms";
@@ -7,8 +8,6 @@ import { useAPI } from "../api-provider";
 import RateLimit from "../rate-limit";
 import { Button } from "../ui/button";
 import ComboBox from "../ui/combobox";
-import Container from "../container";
-import { Input } from "../ui/input";
 import { useState } from "react";
 import { z } from "zod";
 
@@ -78,22 +77,19 @@ function Search() {
     }
 
     return (
-        <Container className="h-[calc(100vh_-_70px)]">
+        <div className="mx-10">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="flex justify-between mb-2">
                     <div className="flex flex-row">
                         <FormField control={form.control} name="search" render={({ field }) => (
                             <FormItem>
                                 <FormControl>
-                                    <Input {...field} placeholder={`Search by ${label}`} className="rounded-r-none" />
+                                    <FloatingLabelInput {...field} label="Search by" className="rounded-r-none" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
-                        <ComboBox options={[
-                            { value: "name", label: "Name" },
-                            { value: "playfabId", label: "PlayFab ID" }
-                        ]} className="rounded-l-none" setLabel={setLabel} />
+                        <ComboBox options={['Name', 'PlayFab ID']} className="rounded-l-none" onChange={(value) => setLabel(value)} />
                     </div>
                     <Button type="submit" variant="outline" className="ml-2">Search</Button>
                 </form>
@@ -101,10 +97,10 @@ function Search() {
                     <DataTable columns={columns} data={tableData} requestFailed={failedRequest} requestStatus={requestStatus} />
                 </div>
             </Form>
-            <div className="mt-2 flex-justify-center">
+            <div className="mt-2 flex justify-center">
                 <RateLimit />
             </div>
-        </Container>
+        </div>
     )
 }
 

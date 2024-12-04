@@ -1,121 +1,102 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs"
-import { ToastAction } from "./components/ui/toast"
-import APIProvider from "./components/api-provider"
-import Dashboard from "./components/tabs/dashboard"
-import { ConstructToastMessage } from "./lib/toast"
-import { Toaster } from "./components/ui/toaster"
-import Settings from "./components/tabs/settings"
-import { ConfettiOptions } from "./lib/confetti"
-import Background from "./components/background"
-import History from "./components/tabs/history"
-import Search from "./components/tabs/search"
-import { useToast } from "./hooks/use-toast"
-import { useEffect, useState } from "react"
-import { IPCEvent } from "./lib/events"
-import confetti from "canvas-confetti"
+import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
+import { createElement, useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import APIProvider from "./components/api-provider";
+import { ToastAction } from "./components/ui/toast";
+import { ConstructToastMessage } from "./lib/toast";
+import { Toaster } from "./components/ui/toaster";
+import AppSidebar from "./components/app-sidebar";
+import { ConfettiOptions } from "./lib/confetti";
+import Background from "./components/background";
+import { setPlayers, setServer } from "./main";
+import { useToast } from "./hooks/use-toast";
+import { IPCEvent } from "./lib/events";
+import confetti from "canvas-confetti";
+import { TabMap } from "./lib/tabs";
+import { useSignals } from "@preact/signals-react/runtime";
 
-interface ApplicationTabs {
-  label: string;
-  component: React.FC<any>;
-}
+function App() {
+    const { toast } = useToast();
+    useSignals();
 
-window.electron.ipcRenderer.on('update', (_, data) => {
-  console.log('update')
-  console.log(data)
-})
-
-const AppTabs = [
-  { label: "Dashboard", component: Dashboard },
-  { label: "Search", component: Search },
-  { label: "History", component: History },
-  { label: "Settings", component: Settings },
-] as ApplicationTabs[]
-const TabsDefault = AppTabs[0].label;
-
-function App(): JSX.Element {
-  const { toast } = useToast();
-
-  const handleErrorNoConsoleKey = () => {
-    toast({
-      variant: 'destructive',
-      title: "No Console Key",
-      description: "You need to set a console key in the settings to use this feature.",
-      action: (
-        <ToastAction altText="Open Settings" onClick={() => {
-          setTab("Settings");
-        }} className="border-2 border-black">Open Settings</ToastAction>
-      )
-    })
-  }
-
-  const handleCommandResponse = (_, response: CommandEvent) => {
-    toast({
-      variant: response.error ? 'destructive' : 'default',
-      title: response.error ? "Command Error" : "Command Success",
-      description: response.error ? response.error : ConstructToastMessage(response.command),
-    })
-
-    const cType = response.command.type
-    ConfettiOptions[cType] && confetti(ConfettiOptions[cType]);
-  }
-
-  const handlePlayerData = (_, data: ParsedPlayerData) => {
-    setPlayers(data.players);
-    setServer(data.server);
-  }
-
-  useEffect(() => {
-    const Events = [
-      IPCEvent('error-no-console-key', handleErrorNoConsoleKey),
-      IPCEvent('command-response', handleCommandResponse),
-      IPCEvent('player-data', handlePlayerData),
-    ]
-
-    return () => {
-      Events.forEach((RemoveIPCEvent) => {
-        RemoveIPCEvent();
-      })
+    const handleErrorNoConsoleKey = () => {
+        toast({
+            variant: 'destructive',
+            title: "No Console Key",
+            description: "You need to set a console key in the settings to use this feature.",
+            action: (
+                <ToastAction altText="Open Settings" onClick={() => {
+                    setTab("Settings");
+                }} className="border-2 border-black">Open Settings</ToastAction>
+            )
+        })
     }
-  }, [])
 
-  const [players, setPlayers] = useState<Player[]>(window.api.isDev ? [{
-    displayName: "Ⱥ Smiggy",
-    playfabId: "6F33D568A08FF682"
-  }] : []);
-  const [server, setServer] = useState<string>("");
+    const handleCommandResponse = (_, response: CommandEvent) => {
+        toast({
+            variant: response.error ? 'destructive' : 'default',
+            title: response.error ? "Command Error" : "Command Success",
+            description: response.error ? response.error : ConstructToastMessage(response.command),
+        })
 
-  const [tab, setTab] = useState(TabsDefault);
+        const cType = response.command.type
+        ConfettiOptions[cType] && confetti(ConfettiOptions[cType]);
+    }
 
-  const onTabChange = (value: string) => {
-    setTab(value);
-  }
+    const handlePlayerData = (_, data: ParsedPlayerData) => {
+        setPlayers(data.players);
+        setServer(data.server);
+    }
 
-  return (
-    <div className="flex flex-col h-screen w-screen">
+    useEffect(() => {
+        const Events = [
+            IPCEvent('error-no-console-key', handleErrorNoConsoleKey),
+            IPCEvent('command-response', handleCommandResponse),
+            IPCEvent('player-data', handlePlayerData)
+        ]
 
-      <Background>
-        <APIProvider server={server}>
-          <Tabs value={tab} onValueChange={onTabChange}>
-            <TabsList className={`grid grid-flow-col grid-cols-${AppTabs.length}`}>
-              {AppTabs.map((tab) => (
-                <TabsTrigger key={tab.label} value={tab.label}>
-                  {tab.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            <div className="flex-1 overflow-hidden">
-              {AppTabs.map((tab) => (
-                <TabsContent key={tab.label} value={tab.label}>
-                  <tab.component players={players} />
-                </TabsContent>
-              ))}
-            </div>
-          </Tabs>
-          <Toaster />
+        return () => {
+            Events.forEach((RemoveIPCEvent) => {
+                RemoveIPCEvent();
+            })
+        }
+    }, [])
+
+    const [tab, setTab] = useState("Dashboard");
+
+    function onTabChange(tab: string) {
+        setTab(tab);
+    }
+
+    return (
+        <APIProvider>
+            <Background>
+                <div className="bg-background/50 backdrop-blur-[2px]">
+                    <SidebarProvider>
+                        <AppSidebar onTabChange={onTabChange} />
+                        <main className="w-svw h-svh overflow-hidden">
+                            <SidebarTrigger />
+                            <AnimatePresence>
+                                {TabMap[tab] && (
+                                    <motion.div
+                                        key={tab}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{ duration: 0.2 }}
+                                        className="h-full w-full"
+                                    >
+                                        {createElement(TabMap[tab])}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </main>
+                    </SidebarProvider>
+                </div>
+            </Background>
+            <Toaster />
         </APIProvider>
-      </Background>
-    </div>
-  )
+    )
 }
 
-export default App
+export default App;

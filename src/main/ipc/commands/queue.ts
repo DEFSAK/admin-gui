@@ -1,6 +1,6 @@
 import { Game, GetGameProcess, WriteToConsole } from './macro'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
-import { app, IpcMainEvent } from 'electron'
+import { app, IpcMain, IpcMainEvent } from 'electron'
 import { join } from 'path'
 
 class CommandQueue {
@@ -8,11 +8,19 @@ class CommandQueue {
   private processing: boolean = false
   public history: SavedCommand[] = []
 
-  constructor() {
+  constructor(ipcMain: IpcMain) {
     const filePath = join(app.getPath('userData'), 'history.json')
     if (existsSync(filePath)) {
       this.history = JSON.parse(readFileSync(filePath, 'utf-8')) as SavedCommand[]
     }
+
+    ipcMain.on('command', (event, command) => {
+      this.add({ event, command })
+    })
+
+    ipcMain.handle('get-command-history', () => {
+      return this.history
+    })
   }
 
   public add(command: CommandEvent) {
@@ -42,8 +50,8 @@ class CommandQueue {
     this.process()
   }
 
-  private _error_fail = (event: IpcMainEvent, error: string) => {
-    event.reply('command-response', { error })
+  private _error_fail = (event: IpcMainEvent, command: Command, error: string) => {
+    event.reply('command-response', { error, command })
     this._skip()
   }
 
@@ -59,7 +67,7 @@ class CommandQueue {
           : command.type === 'list_players'
             ? 'listplayers'
             : command.type === 'unban'
-              ? `unbanbyid ${command.player.playfabId}`
+              ? `unbanbyid ${command.id}`
               : command.type === 'admin' || command.type === 'server'
                 ? `${command.type === 'admin' ? 'adminsay' : 'serversay'} "${command.message}"`
                 : '🫃'
@@ -74,13 +82,13 @@ class CommandQueue {
 
     const { event, command } = this.commands.shift() as CommandEvent
     if (!command) {
-      this._error_fail(event, 'Invalid command')
+      this._error_fail(event, command, 'Invalid command')
       return
     }
 
     const game = GetGameProcess()
     if (!game) {
-      this._error_fail(event, 'Game not running')
+      this._error_fail(event, command, 'Game not running')
       return
     }
 
@@ -91,4 +99,6 @@ class CommandQueue {
   }
 }
 
-export default CommandQueue
+export function InitializeCommandQueue(ipcMain: IpcMain) {
+  new CommandQueue(ipcMain)
+}

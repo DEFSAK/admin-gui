@@ -2,9 +2,8 @@ import { CommandMultiSelect, CommandTypeValue } from "../ui/multi-select";
 import { Clock, File, FileText, Server, User } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAPI } from "../api-provider";
-import Container from "../container";
 import { Badge } from "../ui/badge";
 import { Input } from "../ui/input";
 
@@ -88,15 +87,31 @@ function History() {
 
     const filteredHistory = filterCommands();
 
+    const containerHeight = window.innerHeight - 125;
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (containerRef.current) {
+                containerRef.current.style.height = `${window.innerHeight - 125}px`;
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [])
+
     return (
-        <Container>
+        <div className="mx-10">
             <div className="flex flex-col h-full">
                 <div className="flex-1">
                     <Input placeholder="Search" className="rounded-b-none border-b-0" value={search} onChange={(e) => setSearch(e.currentTarget.value)} />
                     <CommandMultiSelect setSelectedTypes={setFilter} className="rounded-t-none border-t-0" />
                 </div>
                 <div className="flex-1 overflow-hidden">
-                    <ScrollArea className="h-[calc(100vh_-_195px)]">
+                    <ScrollArea style={{
+                        height: containerHeight,
+                    }} ref={containerRef}>
                         {filteredHistory.length > 0 ? (
                             <>
                                 <Separator />
@@ -114,7 +129,7 @@ function History() {
                     </ScrollArea>
                 </div>
             </div>
-        </Container>
+        </div>
     )
 }
 

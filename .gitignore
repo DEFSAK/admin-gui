@@ -1,4 +1,5 @@
 node_modules
+custom-electron-builder-cache
 dist
 /local_modules/keysender/build
 !local_modules/keysender/dist
@@ -6,3 +7,23 @@ out
 .DS_Store
 *.log*
 # tools/lookup_table/input_lists
+local_modules/keysender/build/binding.sln
+local_modules/keysender/build/config.gypi
+local_modules/keysender/build/key_sender.vcxproj
+local_modules/keysender/build/Release/key_sender.iobj
+local_modules/keysender/build/Release/key_sender.ipdb
+local_modules/keysender/build/Release/key_sender.node
+local_modules/keysender/build/Release/key_sender.pdb
+local_modules/keysender/build/Release/obj/key_sender/win_delay_load_hook.obj
+local_modules/keysender/build/Release/obj/key_sender/src/addon/disableInput.obj
+local_modules/keysender/build/Release/obj/key_sender/src/addon/hardware.obj
+local_modules/keysender/build/Release/obj/key_sender/src/addon/helper.obj
+local_modules/keysender/build/Release/obj/key_sender/src/addon/hook.obj
+local_modules/keysender/build/Release/obj/key_sender/src/addon/hotkey.obj
+local_modules/keysender/build/Release/obj/key_sender/src/addon/key_sender.obj
+local_modules/keysender/build/Release/obj/key_sender/src/addon/keyboard.obj
+local_modules/keysender/build/Release/obj/key_sender/src/addon/mouse.obj
+local_modules/keysender/build/Release/obj/key_sender/src/addon/utilities.obj
+local_modules/keysender/build/Release/obj/key_sender/src/addon/virtual.obj
+local_modules/keysender/build/Release/obj/key_sender/src/addon/workwindow.obj
+local_modules/keysender/build/Release/key_sender.node

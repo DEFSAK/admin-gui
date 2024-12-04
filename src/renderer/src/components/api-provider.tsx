@@ -6,11 +6,6 @@ interface API {
     nameLookup: (name: string, page: number) => Promise<APIResponse<NameLookup>>;
     call: <T>(endpoint: string, ...args: any[]) => Promise<T | null>;
     command: (command: Command) => void;
-    server: () => string;
-    reason: string;
-    setReason: (reason: string) => void;
-    duration: number;
-    setDuration: (duration: number) => void;
 }
 
 interface APIContextProps {
@@ -22,9 +17,7 @@ interface APIContextProps {
 
 interface APIProviderProps {
     children?: React.ReactNode;
-    server: string;
 }
-
 
 function APICallFactory({ rate_remaining, setRateRemaining }) {
     return async function <T>(endpoint: APIEndpoint, ...args: any[]): Promise<APIResponse<T>> {
@@ -39,16 +32,12 @@ async function NativeAPICall<T>(listener: string, ...args: any[]): Promise<T> {
 }
 
 const APIContext = createContext<APIContextProps | undefined>(undefined);
-const APIProvider = ({ server, children }: APIProviderProps) => {
+const APIProvider = ({ children }: APIProviderProps) => {
     const rate_limit = 20;
     const refresh_rate = 60000;
 
     const [rate_remaining, setRateRemaining] = useState<number>(rate_limit);
     const [last_refresh, setLastRefresh] = useState<number>(Date.now());
-    const [curServer, setServer] = useState<string>(server);
-
-    const [reason, setReason] = useState('');
-    const [duration, setDuration] = useState(1);
 
     const APICall = APICallFactory({ rate_remaining, setRateRemaining });
 
@@ -61,21 +50,12 @@ const APIProvider = ({ server, children }: APIProviderProps) => {
         return () => clearInterval(intervalId);
     }, [refresh_rate, rate_limit]);
 
-    useEffect(() => {
-        setServer(server);
-    }, [server]);
-
     const api: API = {
         fetchPlayFabData: async (playfabId) => APICall<PlayFabDetails>('fetch_playfab_data', playfabId),
         fetchPlayerData: async (playfabId) => APICall<PlayerDetails>('fetch_player_data', playfabId),
         nameLookup: async (name, page) => APICall<NameLookup>('name_lookup', name, page, 25),
         call: NativeAPICall,
         command: (command: Command) => window.electron.ipcRenderer.send('command', command),
-        server: () => curServer,
-        reason,
-        setReason,
-        duration,
-        setDuration
     }
 
     return (

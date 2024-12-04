@@ -6,17 +6,18 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 interface ComboBoxProps {
-    options: { value: string, label: string }[];
+    options: string[];
+    onChange?: (value: string) => void;
     className?: string;
-    setLabel?: (label: string) => void;
-    setExtValue?: (value: string) => void;
-    extLabel?: string;
 }
 
-function ComboBox({ options, className, setLabel, setExtValue }: ComboBoxProps) {
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState(options[0].value);
+function capitalize(str: string | undefined) {
+    return str ? str.charAt(0).toUpperCase() + str.slice(1) : undefined;
+}
 
+function ComboBox({ options, className, onChange }: ComboBoxProps) {
+    const [value, setValue] = useState(options[0]);
+    const [open, setOpen] = useState(false);
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -28,7 +29,7 @@ function ComboBox({ options, className, setLabel, setExtValue }: ComboBoxProps) 
                     className={cn("w-fit justify-between", className || "")}
                 >
                     {value
-                        ? options.find((o) => o.value === value)?.label
+                        ? capitalize(options.find((o) => o === value))
                         : "Select an option..."}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -40,22 +41,21 @@ function ComboBox({ options, className, setLabel, setExtValue }: ComboBoxProps) 
                         <CommandGroup>
                             {options.map((option) => (
                                 <CommandItem
-                                    key={option.value}
-                                    value={option.value}
+                                    key={option}
+                                    value={option}
                                     onSelect={(currentValue) => {
-                                        setValue(currentValue === value ? "name" : currentValue);
-                                        setExtValue?.(currentValue);
-                                        setLabel?.(option.label);
+                                        setValue(currentValue === value ? options[0] : currentValue);
+                                        onChange?.(currentValue === value ? options[0] : currentValue);
                                         setOpen(false);
                                     }}
                                 >
                                     <Check
                                         className={cn(
                                             "mr-2 h-4 w-4",
-                                            value === option.value ? "opacity-100" : "opacity-0"
+                                            value === option ? "opacity-100" : "opacity-0"
                                         )}
                                     />
-                                    {option.label}
+                                    {capitalize(option)}
                                 </CommandItem>
                             ))}
                         </CommandGroup>

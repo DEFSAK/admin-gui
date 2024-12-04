@@ -54,8 +54,8 @@ function PlayerDialog({ player, setOpen }: PlayerDialogProps) {
                     <div className="flex mx-auto gap-2">
                         <Dialog>
                             <DialogTrigger asChild>
-                                <Button variant="outline">
-                                    <Ban className="mr-2 h-4 w-4" />
+                                <Button variant="outline" className="group">
+                                    <Ban className="mr-2 h-4 w-4 animate-ease-in-out animate-infinite animate-duration-1000 group-hover:animate-spin" />
                                     Ban
                                 </Button>
                             </DialogTrigger>
@@ -65,8 +65,8 @@ function PlayerDialog({ player, setOpen }: PlayerDialogProps) {
                         </Dialog>
                         <Dialog>
                             <DialogTrigger asChild>
-                                <Button variant="outline">
-                                    <UserRoundMinus className="mr-2 h-4 w-4" />
+                                <Button variant="outline" className="group">
+                                    <UserRoundMinus className="mr-2 h-4 w-4 animate-ease-in-out animate-infinite animate-duration-1000 group-hover:animate-jump" />
                                     Kick
                                 </Button>
                             </DialogTrigger>
@@ -78,8 +78,8 @@ function PlayerDialog({ player, setOpen }: PlayerDialogProps) {
                     <div className="flex justify-center flex-col py-2">
                         <Dialog>
                             <DialogTrigger asChild>
-                                <Button variant="outline" size="sm">
-                                    <FileUser className="mr-2 h-4 w-4" />
+                                <Button variant="outline" className="group">
+                                    <FileUser className="mr-2 h-4 w-4 animate-ease-in-out animate-infinite animate-duration-1000 group-hover:animate-wiggle-more" />
                                     View Additional Information
                                 </Button>
                             </DialogTrigger>
@@ -88,18 +88,19 @@ function PlayerDialog({ player, setOpen }: PlayerDialogProps) {
                             </DialogContent>
                         </Dialog>
                         <APIRate condition={playFabData} requestFailed={failedRequest} requestStatus={requestStatus} component={playFabData && (
-                            <div>
+                            <div className="animate-fade">
                                 <div className="h-4 w-full" />
-                                <p className="flex justify-center text-center text-foreground">
-                                    Alias History
-                                </p>
+                                <div className="flex flex-row justify-center items-center gap-2">
+                                    <span>Alias History</span>
+                                    <a target="_blank" href="https://chivalry2stats.com">
+                                        <span className="text-muted-foreground text-xs">(</span>
+                                        <span className="text-green-400 underline text-xs">chivalry2stats</span>
+                                        <span className="text-muted-foreground text-xs">)</span>
+                                    </a>
+                                </div>
                                 <ScrollArea className="h-32 p-2 border border-border rounded-lg">
                                     {playFabData.aliasHistory}
                                 </ScrollArea>
-                                <p className="flex justify-center gap-1 text-sm text-muted">
-                                    from
-                                    <a target="_blank" href="https://chivalry2stats.com" className="text-green-400 underline">chivalry2stats</a>
-                                </p>
                             </div>
                         )} />
                         <div className="flex justify-center mt-4">

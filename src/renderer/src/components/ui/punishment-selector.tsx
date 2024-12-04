@@ -2,14 +2,14 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Command, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./form";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Form, FormField, FormItem, FormControl, FormMessage } from "./form";
 import { Check, ChevronsUpDown, Edit2 } from "lucide-react";
 import { createForm, getBaseObject } from "@/lib/forms";
+import { FloatingLabelInput } from "./floating-input";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { useAPI } from "../api-provider";
 import { cn } from "@/lib/utils";
 import * as React from "react";
@@ -321,10 +321,11 @@ const DialogListItem = ({
                         </AlertDialog>
                     </div>
                 </div>
-                <AccordionContent>
+                <AccordionContent className="p-2">
+
                     <Form {...form}>
                         <form
-                            className="gap-4"
+                            className="flex flex-col gap-4 overflow-auto"
                             onSubmit={form.handleSubmit((data) => {
                                 onSubmit(data);
                                 setAccordionValue("");
@@ -332,36 +333,32 @@ const DialogListItem = ({
                         >
                             <FormField control={form.control} name="label" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Label name</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Label name" {...field} />
+                                        <FloatingLabelInput label="Label name" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                             <FormField control={form.control} name="reason" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Reason</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Reason" {...field} />
+                                        <FloatingLabelInput {...field} label="Reason" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                             <FormField control={form.control} name="min_duration" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Min. Duration</FormLabel>
                                     <FormControl>
-                                        <Input type="number" placeholder="Min. Duration" {...field} />
+                                        <FloatingLabelInput type="number" label="Min. Duration" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                             <FormField control={form.control} name="max_duration" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Max. Duration</FormLabel>
                                     <FormControl>
-                                        <Input type="number" placeholder="Max. Duration" {...field} />
+                                        <FloatingLabelInput type="number" label="Max. Duration" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

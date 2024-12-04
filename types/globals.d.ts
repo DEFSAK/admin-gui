@@ -22,3 +22,16 @@ interface ParsedPlayerData {
   server: string
   players: Player[]
 }
+
+interface Contributor {
+  login: string
+  avatar_url: string
+  html_url: string
+  contributions: number
+}
+
+interface Announcement {
+  label: string
+  type: 'admin' | 'server'
+  message: string
+}

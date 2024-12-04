@@ -1,6 +1,8 @@
 import { useAPI } from "./api-provider";
+import { motion } from "framer-motion";
 import { statusMap } from "@/lib/api";
 import { cloneElement } from "react";
+import { cn } from "@/lib/utils";
 
 interface APIRateProps {
     condition: any | null;
@@ -16,28 +18,45 @@ function APIRate({ condition, component, requestFailed, requestStatus }: APIRate
         return condition !== null;
     }
 
+    const AlertContainer = ({ variant, className, children }) => {
+        const variants = {
+            error: "bg-red-500/10 border-red-500/50",
+            loading: "bg-gray-500/10 border-gray-500/50",
+        }
+
+        const selectedVariant = variants[variant] || variants.error;
+
+        return (
+            <motion.div
+                className={cn("p-2 mt-2 border-2 border-dashed rounded-md", selectedVariant, className)}
+            >
+                {children}
+            </motion.div>
+        )
+    }
+
     return (
         <>
             {conditionMet() ? (
                 component && cloneElement(component)
             ) : rate_remaining === 0 ? (
-                <div className="flex mx-auto">
+                <AlertContainer variant="error" className="flex items-center justify-center">
                     <span className="text-red-400 text-center">
-                        Rate Limit Reached!
+                        {statusMap[429]}
                     </span>
-                </div>
+                </AlertContainer>
             ) : requestFailed ? (
-                <div className="flex mx-auto flex-col">
+                <AlertContainer variant="error" className="flex items-center justify-center">
                     <span className="text-red-400 text-center">
                         {statusMap[requestStatus.toString()]}
                     </span>
-                </div>
+                </AlertContainer>
             ) : (
-                <div className="flex mx-auto">
+                <AlertContainer variant="loading" className="flex items-center justify-center">
                     <span className="text-gray-400 text-center">
-                        Loading...
+                        Loading
                     </span>
-                </div>
+                </AlertContainer>
             )}
         </>
     )

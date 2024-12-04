@@ -6,7 +6,7 @@ interface PlayerNameProps {
 }
 
 function PlayerName({ name }: PlayerNameProps) {
-    const converted = unidecode(convertUnicode(name))
+    const converted = unidecode(convertUnicode(name.trim()))
     const showConverted = converted !== name
 
     return (

@@ -39,3 +39,5 @@ initial structure:
 ȸ
 ▲
 ᚢᚾᚷᚨᚾᛞᛁᛉ add alphabet
+
+ᚲ Elder Futhark runic alphabet < not accepted as filename

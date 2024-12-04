@@ -15,10 +15,6 @@ export const columns: ColumnDef<TableColumns>[] = [
         header: "Name",
     },
     {
-        accessorKey: "playfabId",
-        header: "PlayFab ID",
-    },
-    {
         accessorKey: "truncated_aliasHistory",
         header: "Alias History",
         cell: ({ row }) => {

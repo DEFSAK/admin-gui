@@ -19,3 +19,5 @@ nsis:
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
 npmRebuild: false
+electronDownload:
+  cache: "./custom-electron-builder-cache"

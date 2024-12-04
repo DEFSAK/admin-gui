@@ -8,7 +8,7 @@ interface Command_Ban {
 
 interface Command_Unban {
   type: 'unban'
-  player: Player
+  id: string
   server: string
 }
 
