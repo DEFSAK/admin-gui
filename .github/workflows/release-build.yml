@@ -120,5 +120,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            dist/${{ env.newsetupname }}
             dist/latest.yml
+            dist/*.exe
